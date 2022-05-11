@@ -1,0 +1,17 @@
+{
+  "name": "221b-b-s",
+  "version": "1.0.0",
+  "description": "c64 copy of game",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production"
+  },
+  "author": "",
+  "license": "ISC"
+}
