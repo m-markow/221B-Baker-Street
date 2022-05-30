@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>221B Baker Street</title>
     <script src="./src/221b.boundle.js" type="module"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="node_modules/canvasinput/CanvasInput.js"></script>
 </head>
 <body>
-<img src="assets/map.png" style="width: 100%; height: 100%; display: none" alt="image" id="img">
-<div class="main-container">
+<div class="main-container" id="config">
+    <img src="assets/init/init0.png" style="width: 50%; height: 50%;" alt="image" id="img">
+</div>
+<div class="main-container" id="game" style="display: none">
     <canvas width="1000px" height="540px" id="canva"></canvas>
     <div></div>
 </div>
