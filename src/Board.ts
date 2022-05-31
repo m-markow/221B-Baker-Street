@@ -315,7 +315,7 @@ export default class Board
                     {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        this.startGame();
+                        this.Game();
 
                     }
                 }
@@ -328,15 +328,21 @@ export default class Board
     /**
      * Function starting game
      */
-    startGame()
+    Game()
     {
-        console.log(this.case);
         let ctx = CANVAS!.getContext("2d");
         let img = document.querySelector('#img') as HTMLImageElement;
         img.src = './assets/map.png';
         img.onload = ()=> {
             ctx!.clearRect(0, 0, CANVAS!.width, CANVAS!.height);
             ctx!.drawImage(img, 0, -540);
+            let sherlock = new Image();
+            sherlock.src = './assets/characters/1_active.png';
+            sherlock.onload = ()=> {
+                ctx!.drawImage(sherlock, CANVAS!.width / 1.2, CANVAS!.height / 1.2);
+            }
         }
     }
+
+
 }

@@ -286,7 +286,7 @@ var Board = /** @class */ (function () {
                     if (e.keyCode === 13) {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        _this.startGame();
+                        _this.Game();
                     }
                 };
                 document.addEventListener('keyup', click);
@@ -296,14 +296,18 @@ var Board = /** @class */ (function () {
     /**
      * Function starting game
      */
-    Board.prototype.startGame = function () {
-        console.log(this.case);
+    Board.prototype.Game = function () {
         var ctx = CANVAS.getContext("2d");
         var img = document.querySelector('#img');
         img.src = './assets/map.png';
         img.onload = function () {
             ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
             ctx.drawImage(img, 0, -540);
+            var sherlock = new Image();
+            sherlock.src = './assets/characters/1_active.png';
+            sherlock.onload = function () {
+                ctx.drawImage(sherlock, CANVAS.width / 1.2, CANVAS.height / 1.2);
+            };
         };
     };
     return Board;
