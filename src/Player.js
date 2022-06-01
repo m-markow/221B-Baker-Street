@@ -1,13 +1,10 @@
 var CANVAS = document.querySelector('#canva');
-// left-bottom corner [40, 450]
+var main_context = CANVAS.getContext('2d');
+import { forbidden_positions, map_edges } from "./data_tools/ForbiddenPositions.js";
+import { map_parts_management } from "./data_tools/MapPartsManagement.js";
+// left-bottom corner [35, 450]
 // each next +-125px (OX) (right/left)
 // each next +-50px (OX) +-55px (OY) (up/down) |
-var forbidden_positions = [
-    //221B
-    [85, 395], [210, 395], [335, 395],
-    [385, 340], [435, 285], [485, 230],
-    [360, 230], [235, 230]
-];
 var Player = /** @class */ (function () {
     function Player() {
         this.playerName = '';
@@ -17,6 +14,8 @@ var Player = /** @class */ (function () {
         this.currentPosition = [160, 450]; // default spawn position [160, 450]
         this.position_row_col = [0, 1]; // default spawn position [0, 1]
         this.canvas = null;
+        this.map_segment = [0, -540];
+        this.forbidden_pos_coefficient = [0, 0];
     }
     Player.prototype.clueCode = function (value) {
         this._clueCode = value;
@@ -58,10 +57,19 @@ var Player = /** @class */ (function () {
         };
         document.addEventListener('keyup', move_listener);
     };
+    /**
+     * Function check whether user try to step out from board or onto building
+     * @param x - x coordinate
+     * @param y - y coordinate
+     */
     Player.prototype.check_if_forbidden = function (x, y) {
         var result = true;
         for (var i = 0; i < forbidden_positions.length; i++) {
-            if (forbidden_positions[i][0] == x && forbidden_positions[i][1] == y)
+            if (forbidden_positions[i][0] + this.forbidden_pos_coefficient[0] == x && forbidden_positions[i][1] + this.forbidden_pos_coefficient[1] == y)
+                result = false;
+        }
+        for (var i = 0; i < map_edges.length; i++) {
+            if (map_edges[i][0] + this.forbidden_pos_coefficient[0] == x && map_edges[i][1] + this.forbidden_pos_coefficient[1] == y)
                 result = false;
         }
         return result;
@@ -78,6 +86,27 @@ var Player = /** @class */ (function () {
             character_1.onload = function () {
                 ctx_1.drawImage(character_1, _this.currentPosition[0], _this.currentPosition[1]);
                 _this.position_row_col[0] += 1;
+                var _loop_1 = function (i) {
+                    if (map_parts_management.up[i][0] + _this.forbidden_pos_coefficient[0] == _this.currentPosition[0] && map_parts_management.up[i][1] + _this.forbidden_pos_coefficient[1] == _this.currentPosition[1]) {
+                        var new_map_segment_1 = new Image();
+                        new_map_segment_1.src = './assets/map.png';
+                        new_map_segment_1.onload = function () {
+                            main_context.clearRect(0, 0, CANVAS.width, CANVAS.height);
+                            _this.map_segment[0] -= 420;
+                            _this.map_segment[1] += 300;
+                            main_context.drawImage(new_map_segment_1, _this.map_segment[0], _this.map_segment[1]);
+                            ctx_1.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
+                            _this.currentPosition[0] -= 420;
+                            _this.currentPosition[1] += 300;
+                            _this.forbidden_pos_coefficient[0] -= 420;
+                            _this.forbidden_pos_coefficient[1] += 300;
+                            ctx_1.drawImage(character_1, _this.currentPosition[0], _this.currentPosition[1]);
+                        };
+                    }
+                };
+                for (var i = 0; i < map_parts_management.up.length; i++) {
+                    _loop_1(i);
+                }
             };
         }
     };
@@ -93,6 +122,27 @@ var Player = /** @class */ (function () {
             character_2.onload = function () {
                 ctx_2.drawImage(character_2, _this.currentPosition[0], _this.currentPosition[1]);
                 _this.position_row_col[0] -= 1;
+                var _loop_2 = function (i) {
+                    if (map_parts_management.down[i][0] + _this.forbidden_pos_coefficient[0] == _this.currentPosition[0] && map_parts_management.down[i][1] + _this.forbidden_pos_coefficient[1] == _this.currentPosition[1]) {
+                        var new_map_segment_2 = new Image();
+                        new_map_segment_2.src = './assets/map.png';
+                        new_map_segment_2.onload = function () {
+                            main_context.clearRect(0, 0, CANVAS.width, CANVAS.height);
+                            _this.map_segment[0] += 420;
+                            _this.map_segment[1] -= 300;
+                            main_context.drawImage(new_map_segment_2, _this.map_segment[0], _this.map_segment[1]);
+                            ctx_2.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
+                            _this.currentPosition[0] += 420;
+                            _this.currentPosition[1] -= 300;
+                            _this.forbidden_pos_coefficient[0] += 420;
+                            _this.forbidden_pos_coefficient[1] -= 300;
+                            ctx_2.drawImage(character_2, _this.currentPosition[0], _this.currentPosition[1]);
+                        };
+                    }
+                };
+                for (var i = 0; i < map_parts_management.down.length; i++) {
+                    _loop_2(i);
+                }
             };
         }
     };
@@ -107,6 +157,24 @@ var Player = /** @class */ (function () {
             character_3.onload = function () {
                 ctx_3.drawImage(character_3, _this.currentPosition[0], _this.currentPosition[1]);
                 _this.position_row_col[1] -= 1;
+                var _loop_3 = function (i) {
+                    if (map_parts_management.left[i][0] + _this.forbidden_pos_coefficient[0] == _this.currentPosition[0] && map_parts_management.left[i][1] + _this.forbidden_pos_coefficient[1] == _this.currentPosition[1]) {
+                        var new_map_segment_3 = new Image();
+                        new_map_segment_3.src = './assets/map.png';
+                        new_map_segment_3.onload = function () {
+                            main_context.clearRect(0, 0, CANVAS.width, CANVAS.height);
+                            _this.map_segment[0] += 1000;
+                            main_context.drawImage(new_map_segment_3, _this.map_segment[0], _this.map_segment[1]);
+                            ctx_3.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
+                            _this.currentPosition[0] += 1000;
+                            _this.forbidden_pos_coefficient[0] += 1000;
+                            ctx_3.drawImage(character_3, _this.currentPosition[0], _this.currentPosition[1]);
+                        };
+                    }
+                };
+                for (var i = 0; i < map_parts_management.left.length; i++) {
+                    _loop_3(i);
+                }
             };
         }
     };
@@ -121,6 +189,24 @@ var Player = /** @class */ (function () {
             character_4.onload = function () {
                 ctx_4.drawImage(character_4, _this.currentPosition[0], _this.currentPosition[1]);
                 _this.position_row_col[1] += 1;
+                var _loop_4 = function (i) {
+                    if (map_parts_management.right[i][0] + _this.forbidden_pos_coefficient[0] == _this.currentPosition[0] && map_parts_management.right[i][1] + _this.forbidden_pos_coefficient[1] == _this.currentPosition[1]) {
+                        var new_map_segment_4 = new Image();
+                        new_map_segment_4.src = './assets/map.png';
+                        new_map_segment_4.onload = function () {
+                            main_context.clearRect(0, 0, CANVAS.width, CANVAS.height);
+                            _this.map_segment[0] -= 1000;
+                            main_context.drawImage(new_map_segment_4, _this.map_segment[0], _this.map_segment[1]);
+                            ctx_4.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
+                            _this.currentPosition[0] -= 1000;
+                            _this.forbidden_pos_coefficient[0] -= 1000;
+                            ctx_4.drawImage(character_4, _this.currentPosition[0], _this.currentPosition[1]);
+                        };
+                    }
+                };
+                for (var i = 0; i < map_parts_management.right.length; i++) {
+                    _loop_4(i);
+                }
             };
         }
     };
