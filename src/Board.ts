@@ -195,7 +195,8 @@ export default class Board
 
             const clues_assignment = () => {
                 document.removeEventListener('keypress', ynHandler);
-                let code_array = ['A', 'B', 'C', 'D'];
+                //let code_array = ['A', 'B', 'C', 'D'];
+                let code_array = ['A'];
 
                 const showClueCode = (i: number) => {
                     this.playersBoard[i].clueCode(code_array[Math.floor(Math.random() * code_array.length)] + (Math.floor(Math.random() * 5) + 1));

@@ -13,12 +13,13 @@ export default class Player
     public playerName: string = '';
     private _clueCode: string = '';
     public playerCharacter: number | null = null;
-    public diceRoll_result: number | null = null;
     protected currentPosition: Array<number> = [160, 450]; // default spawn position [160, 450]
     protected position_row_col: Array<number> = [0, 1]; // default spawn position [0, 1]
     public canvas: HTMLCanvasElement | null = null;
     public map_segment: Array<number> = [0, -540];
     public forbidden_pos_coefficient: Array<number> = [0, 0];
+    public diceRoll_result: number | null = null;
+    public move_handler: any;
 
 
     clueCode(value: string) {
@@ -28,6 +29,8 @@ export default class Player
     clueCodeGet(): string {
         return this._clueCode;
     }
+
+
 
     spawn()
     {
@@ -48,25 +51,48 @@ export default class Player
             ctx!.drawImage(character, this.currentPosition[0], this.currentPosition[1]);
         }
 
-        const move_listener = (e: KeyboardEvent)=>{
-            switch (e.key) {
-                case "ArrowLeft":
-                    this.move_left();
-                    break;
-                case "ArrowRight":
-                    this.move_right();
-                    break;
-                case "ArrowUp":
-                    this.move_up();
-                    break;
-                case "ArrowDown":
-                    this.move_down();
-                    break;
-            }
-        }
-
-        document.addEventListener('keyup', move_listener);
     }
+
+    /**
+     * Function enables or disables moves of player
+     * @param is_allowed - boolean indicating whether move is allowed or not
+     * @param dice_roll_result - roll result
+     */
+    allowMove(is_allowed: boolean, dice_roll_result: number | null)
+    {
+        console.log(dice_roll_result);
+        if (dice_roll_result !== null)
+            this.diceRoll_result = dice_roll_result;
+        const move_listener = (e: KeyboardEvent)=>{
+        switch (e.key) {
+            case "ArrowLeft":
+                this.move_left();
+                break;
+            case "ArrowRight":
+                this.move_right();
+                break;
+            case "ArrowUp":
+                this.move_up();
+                break;
+            case "ArrowDown":
+                this.move_down();
+                break;
+        }
+    }
+
+        if (is_allowed) {
+            this.move_handler = move_listener.bind(this);
+            document.addEventListener('keyup', this.move_handler);
+        }
+        else
+            document.removeEventListener('keyup', this.move_handler);
+
+    }
+
+    check_moves(): boolean {
+        return this.diceRoll_result! > 0;
+    }
+
 
     /**
      * Function check whether user try to step out from board or onto building
@@ -89,6 +115,7 @@ export default class Player
     move_up()
     {
         if (this.check_if_forbidden(this.currentPosition[0] + 50, this.currentPosition[1] - 55)){
+            this.diceRoll_result!--;
             let ctx = this.canvas!.getContext("2d") as CanvasRenderingContext2D;
             ctx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
             this.currentPosition[0] += 50;
@@ -125,6 +152,7 @@ export default class Player
 
     move_down() {
         if (this.check_if_forbidden(this.currentPosition[0] - 50, this.currentPosition[1] + 55)) {
+            this.diceRoll_result!--;
             let ctx = this.canvas!.getContext("2d") as CanvasRenderingContext2D;
             ctx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
             this.currentPosition[0] -= 50;
@@ -160,6 +188,7 @@ export default class Player
 
     move_left() {
         if (this.check_if_forbidden(this.currentPosition[0] - 125, this.currentPosition[1])) {
+            this.diceRoll_result!--;
             let ctx = this.canvas!.getContext("2d") as CanvasRenderingContext2D;
             ctx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
             this.currentPosition[0] -= 125;
@@ -191,6 +220,7 @@ export default class Player
 
     move_right() {
         if (this.check_if_forbidden(this.currentPosition[0] + 125, this.currentPosition[1])) {
+            this.diceRoll_result!--;
             let ctx = this.canvas!.getContext("2d") as CanvasRenderingContext2D;
             ctx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
             this.currentPosition[0] += 125;

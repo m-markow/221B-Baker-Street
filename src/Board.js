@@ -177,7 +177,8 @@ var Board = /** @class */ (function () {
             var ynHandler = yn_listen.bind(_this, 800, 260);
             var clues_assignment = function () {
                 document.removeEventListener('keypress', ynHandler);
-                var code_array = ['A', 'B', 'C', 'D'];
+                //let code_array = ['A', 'B', 'C', 'D'];
+                var code_array = ['A'];
                 var showClueCode = function (i) {
                     _this.playersBoard[i].clueCode(code_array[Math.floor(Math.random() * code_array.length)] + (Math.floor(Math.random() * 5) + 1));
                     //console.log(this.playersBoard[i].clueCodeGet());

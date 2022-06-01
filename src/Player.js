@@ -10,12 +10,12 @@ var Player = /** @class */ (function () {
         this.playerName = '';
         this._clueCode = '';
         this.playerCharacter = null;
-        this.diceRoll_result = null;
         this.currentPosition = [160, 450]; // default spawn position [160, 450]
         this.position_row_col = [0, 1]; // default spawn position [0, 1]
         this.canvas = null;
         this.map_segment = [0, -540];
         this.forbidden_pos_coefficient = [0, 0];
+        this.diceRoll_result = null;
     }
     Player.prototype.clueCode = function (value) {
         this._clueCode = value;
@@ -39,6 +39,17 @@ var Player = /** @class */ (function () {
         character.onload = function () {
             ctx.drawImage(character, _this.currentPosition[0], _this.currentPosition[1]);
         };
+    };
+    /**
+     * Function enables or disables moves of player
+     * @param is_allowed - boolean indicating whether move is allowed or not
+     * @param dice_roll_result - roll result
+     */
+    Player.prototype.allowMove = function (is_allowed, dice_roll_result) {
+        var _this = this;
+        console.log(dice_roll_result);
+        if (dice_roll_result !== null)
+            this.diceRoll_result = dice_roll_result;
         var move_listener = function (e) {
             switch (e.key) {
                 case "ArrowLeft":
@@ -55,7 +66,15 @@ var Player = /** @class */ (function () {
                     break;
             }
         };
-        document.addEventListener('keyup', move_listener);
+        if (is_allowed) {
+            this.move_handler = move_listener.bind(this);
+            document.addEventListener('keyup', this.move_handler);
+        }
+        else
+            document.removeEventListener('keyup', this.move_handler);
+    };
+    Player.prototype.check_moves = function () {
+        return this.diceRoll_result > 0;
     };
     /**
      * Function check whether user try to step out from board or onto building
@@ -77,6 +96,7 @@ var Player = /** @class */ (function () {
     Player.prototype.move_up = function () {
         var _this = this;
         if (this.check_if_forbidden(this.currentPosition[0] + 50, this.currentPosition[1] - 55)) {
+            this.diceRoll_result--;
             var ctx_1 = this.canvas.getContext("2d");
             ctx_1.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.currentPosition[0] += 50;
@@ -113,6 +133,7 @@ var Player = /** @class */ (function () {
     Player.prototype.move_down = function () {
         var _this = this;
         if (this.check_if_forbidden(this.currentPosition[0] - 50, this.currentPosition[1] + 55)) {
+            this.diceRoll_result--;
             var ctx_2 = this.canvas.getContext("2d");
             ctx_2.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.currentPosition[0] -= 50;
@@ -149,6 +170,7 @@ var Player = /** @class */ (function () {
     Player.prototype.move_left = function () {
         var _this = this;
         if (this.check_if_forbidden(this.currentPosition[0] - 125, this.currentPosition[1])) {
+            this.diceRoll_result--;
             var ctx_3 = this.canvas.getContext("2d");
             ctx_3.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.currentPosition[0] -= 125;
@@ -181,6 +203,7 @@ var Player = /** @class */ (function () {
     Player.prototype.move_right = function () {
         var _this = this;
         if (this.check_if_forbidden(this.currentPosition[0] + 125, this.currentPosition[1])) {
+            this.diceRoll_result--;
             var ctx_4 = this.canvas.getContext("2d");
             ctx_4.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.currentPosition[0] += 125;
