@@ -4,6 +4,12 @@
 }
 
 .main-container{
-    display: flex;
-    justify-content: center;
+    margin: auto;
+    position: relative;
+}
+
+.main-container canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
 }

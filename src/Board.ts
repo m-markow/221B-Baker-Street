@@ -1,4 +1,5 @@
 import Player from "./Player.js";
+import Game from "./Game.js";
 
 const CANVAS: HTMLCanvasElement | null = document.querySelector('#canva');
 
@@ -36,7 +37,9 @@ export default class Board
         const KeyPress_playersNumber = (x: number, y: number, context: CanvasRenderingContext2D) => {
             // @ts-ignore
             if (parseInt(event!.key) && parseInt(event!.key) > 0 && parseInt(event!.key) < 5) {
+                // @ts-ignore
                 this.playersNumber = parseInt(event!.key);
+                // @ts-ignore
                 context?.fillText(event!.key, x, y);
                 playerNames();
             }
@@ -47,14 +50,14 @@ export default class Board
         let eventHandler = KeyPress_playersNumber.bind(this, 800, 216, ctx);
         window.setTimeout(() => {
                 (document.querySelector('#config') as HTMLDivElement).style.display = 'none';
-                (document.querySelector('#game') as HTMLDivElement).style.display = 'flex';
+                (document.querySelector('#game') as HTMLDivElement).style.display = 'block';
                 img.src = './assets/config/config0.png';
 
                 img.onload = () => {
                     ctx?.drawImage(img, 0, 0, img.width / 1.5, img.height / 1.5);
                     ctx!.font = '15pt C64';
                     ctx!.fillStyle = '#AE8E81';
-                    window.addEventListener('keypress', eventHandler);
+                    document.addEventListener('keypress', eventHandler);
 
                 }
             }, //15000
@@ -67,10 +70,11 @@ export default class Board
         const input_array: any[] = [];
 
         const playerNames = () => {
-            window.removeEventListener('keypress', eventHandler);
+            document.removeEventListener('keypress', eventHandler);
             img.src = './assets/config/playerName.png';
 
             const enterListen = () => {
+                // @ts-ignore
                 if (event!.keyCode === 13) {
                     let result = true;
                     for (let i = 1; i <= this.playersNumber; i++) {
@@ -79,7 +83,7 @@ export default class Board
                     }
                     if (result) {
                         choose_clues();
-                        window.removeEventListener('keypress', enterListen);
+                        document.removeEventListener('keypress', enterListen);
                     }
                 }
             }
@@ -165,7 +169,7 @@ export default class Board
                     }
                 }
 
-                window.addEventListener('keypress', enterListen);
+                document.addEventListener('keypress', enterListen);
 
             }
         }
@@ -175,8 +179,11 @@ export default class Board
                 input_array[i].destroy();
             }
             const yn_listen = (x: number, y: number) => {
+                // @ts-ignore
                 if (event!.key == 'y' || event!.key == 'n') {
+                    // @ts-ignore
                     ctx!.fillText(event!.key.toUpperCase(), x, y);
+                    // @ts-ignore
                     if (event!.key == 'y') {
                         this.coded_clues = true;
                         clues_assignment();
@@ -187,7 +194,7 @@ export default class Board
             let ynHandler = yn_listen.bind(this, 800, 260);
 
             const clues_assignment = () => {
-                window.removeEventListener('keypress', ynHandler);
+                document.removeEventListener('keypress', ynHandler);
                 let code_array = ['A', 'B', 'C', 'D'];
 
                 const showClueCode = (i: number) => {
@@ -226,7 +233,7 @@ export default class Board
                 img.src = './assets/config/clues.png';
                 img.onload = () => {
                     ctx!.drawImage(img, 180, 230, img.width / 1.5, img.height / 1.5);
-                    window.addEventListener('keypress', ynHandler);
+                    document.addEventListener('keypress', ynHandler);
                 }
             }
         }
@@ -315,31 +322,12 @@ export default class Board
                     {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        this.Game();
+                        new Game(this.playersBoard, this.coded_clues, this.case);
 
                     }
                 }
 
                 document.addEventListener('keyup', click);
-            }
-        }
-    }
-
-    /**
-     * Function starting game
-     */
-    Game()
-    {
-        let ctx = CANVAS!.getContext("2d");
-        let img = document.querySelector('#img') as HTMLImageElement;
-        img.src = './assets/map.png';
-        img.onload = ()=> {
-            ctx!.clearRect(0, 0, CANVAS!.width, CANVAS!.height);
-            ctx!.drawImage(img, 0, -540);
-            let sherlock = new Image();
-            sherlock.src = './assets/characters/1_active.png';
-            sherlock.onload = ()=> {
-                ctx!.drawImage(sherlock, CANVAS!.width / 1.2, CANVAS!.height / 1.2);
             }
         }
     }

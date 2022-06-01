@@ -1,4 +1,5 @@
 import Player from "./Player.js";
+import Game from "./Game.js";
 var CANVAS = document.querySelector('#canva');
 var Board = /** @class */ (function () {
     function Board() {
@@ -29,7 +30,9 @@ var Board = /** @class */ (function () {
         var KeyPress_playersNumber = function (x, y, context) {
             // @ts-ignore
             if (parseInt(event.key) && parseInt(event.key) > 0 && parseInt(event.key) < 5) {
+                // @ts-ignore
                 _this.playersNumber = parseInt(event.key);
+                // @ts-ignore
                 context === null || context === void 0 ? void 0 : context.fillText(event.key, x, y);
                 playerNames();
             }
@@ -39,13 +42,13 @@ var Board = /** @class */ (function () {
         var eventHandler = KeyPress_playersNumber.bind(this, 800, 216, ctx);
         window.setTimeout(function () {
             document.querySelector('#config').style.display = 'none';
-            document.querySelector('#game').style.display = 'flex';
+            document.querySelector('#game').style.display = 'block';
             img.src = './assets/config/config0.png';
             img.onload = function () {
                 ctx === null || ctx === void 0 ? void 0 : ctx.drawImage(img, 0, 0, img.width / 1.5, img.height / 1.5);
                 ctx.font = '15pt C64';
                 ctx.fillStyle = '#AE8E81';
-                window.addEventListener('keypress', eventHandler);
+                document.addEventListener('keypress', eventHandler);
             };
         }, //15000
         1);
@@ -54,9 +57,10 @@ var Board = /** @class */ (function () {
         };
         var input_array = [];
         var playerNames = function () {
-            window.removeEventListener('keypress', eventHandler);
+            document.removeEventListener('keypress', eventHandler);
             img.src = './assets/config/playerName.png';
             var enterListen = function () {
+                // @ts-ignore
                 if (event.keyCode === 13) {
                     var result = true;
                     for (var i = 1; i <= _this.playersNumber; i++) {
@@ -66,7 +70,7 @@ var Board = /** @class */ (function () {
                     }
                     if (result) {
                         choose_clues();
-                        window.removeEventListener('keypress', enterListen);
+                        document.removeEventListener('keypress', enterListen);
                     }
                 }
             };
@@ -149,7 +153,7 @@ var Board = /** @class */ (function () {
                 for (var i = 1; i <= _this.playersNumber; i++) {
                     _loop_1(i);
                 }
-                window.addEventListener('keypress', enterListen);
+                document.addEventListener('keypress', enterListen);
             };
         };
         var choose_clues = function () {
@@ -157,8 +161,11 @@ var Board = /** @class */ (function () {
                 input_array[i].destroy();
             }
             var yn_listen = function (x, y) {
+                // @ts-ignore
                 if (event.key == 'y' || event.key == 'n') {
+                    // @ts-ignore
                     ctx.fillText(event.key.toUpperCase(), x, y);
+                    // @ts-ignore
                     if (event.key == 'y') {
                         _this.coded_clues = true;
                         clues_assignment();
@@ -169,7 +176,7 @@ var Board = /** @class */ (function () {
             };
             var ynHandler = yn_listen.bind(_this, 800, 260);
             var clues_assignment = function () {
-                window.removeEventListener('keypress', ynHandler);
+                document.removeEventListener('keypress', ynHandler);
                 var code_array = ['A', 'B', 'C', 'D'];
                 var showClueCode = function (i) {
                     _this.playersBoard[i].clueCode(code_array[Math.floor(Math.random() * code_array.length)] + (Math.floor(Math.random() * 5) + 1));
@@ -207,7 +214,7 @@ var Board = /** @class */ (function () {
                 img.src = './assets/config/clues.png';
                 img.onload = function () {
                     ctx.drawImage(img, 180, 230, img.width / 1.5, img.height / 1.5);
-                    window.addEventListener('keypress', ynHandler);
+                    document.addEventListener('keypress', ynHandler);
                 };
             };
         };
@@ -286,27 +293,10 @@ var Board = /** @class */ (function () {
                     if (e.keyCode === 13) {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        _this.Game();
+                        new Game(_this.playersBoard, _this.coded_clues, _this.case);
                     }
                 };
                 document.addEventListener('keyup', click);
-            };
-        };
-    };
-    /**
-     * Function starting game
-     */
-    Board.prototype.Game = function () {
-        var ctx = CANVAS.getContext("2d");
-        var img = document.querySelector('#img');
-        img.src = './assets/map.png';
-        img.onload = function () {
-            ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
-            ctx.drawImage(img, 0, -540);
-            var sherlock = new Image();
-            sherlock.src = './assets/characters/1_active.png';
-            sherlock.onload = function () {
-                ctx.drawImage(sherlock, CANVAS.width / 1.2, CANVAS.height / 1.2);
             };
         };
     };

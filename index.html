@@ -11,9 +11,11 @@
 <div class="main-container" id="config">
     <img src="assets/init/init0.png" style="width: 50%; height: 50%;" alt="image" id="img">
 </div>
+<div style="display: flex; flex-direction: column;">
 <div class="main-container" id="game" style="display: none">
-    <canvas width="1000px" height="540px" id="canva"></canvas>
-    <div></div>
+        <canvas width="1000px" height="540px" id="canva" style="z-index: 0; position: relative"></canvas>
+</div>
+        <canvas width="1000px" height="190px" id="text_area"></canvas>
 </div>
 </body>
 </html>
