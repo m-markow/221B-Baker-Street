@@ -1,5 +1,6 @@
 import Player from "./Player.js";
 import Game from "./Game.js";
+import {placesPositions} from "./data_tools/PlacesPositions.js";
 
 const CANVAS: HTMLCanvasElement | null = document.querySelector('#canva');
 
@@ -82,6 +83,9 @@ export default class Board
                         //console.log(this.playersBoard[i - 1].playerName);
                     }
                     if (result) {
+                        for (let i = 0; i < this.playersBoard.length; i++) {
+                            this.playersBoard[i].players_board = this.playersBoard;
+                        }
                         choose_clues();
                         document.removeEventListener('keypress', enterListen);
                     }
@@ -300,7 +304,8 @@ export default class Board
                 ctx!.fillStyle = '#AE8E81';
 
                 const setCase = (val: string)=>{
-                    this.case = parseInt(val);
+                    if (parseInt(val))
+                        this.case = parseInt(val);
                 }
 
                 // @ts-ignore
@@ -319,12 +324,17 @@ export default class Board
                 });
 
                 const click = (e: KeyboardEvent)=>{
-                    if (e.keyCode === 13)
+                    if (e.keyCode === 13 && this.case)
                     {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        new Game(this.playersBoard, this.coded_clues, this.case);
-
+                        for (let i = 0; i < placesPositions.length; i++) {
+                            placesPositions[i].clue = this.case;
+                        }
+                        let game = new Game(this.playersBoard, this.coded_clues, this.case);
+                        for (let i = 0; i < placesPositions.length; i++) {
+                            placesPositions[i].game = game;
+                        }
                     }
                 }
 

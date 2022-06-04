@@ -22,7 +22,7 @@ export default class Game{
      */
     startGame()
     {
-        let ctx = CANVAS!.getContext("2d");
+        const ctx = CANVAS!.getContext("2d");
         let img = document.querySelector('#img') as HTMLImageElement;
         img.src = './assets/map.png';
         img.onload = ()=> {
@@ -40,6 +40,15 @@ export default class Game{
 
     next_round(player: Player, player_number: number)
     {
+        console.log(player);
+        //load map segment
+        const main_ctx = CANVAS!.getContext("2d");
+        let new_map_segment = new Image();
+        new_map_segment.src = './assets/map.png';
+        new_map_segment.onload = ()=>{
+            main_ctx!.drawImage(new_map_segment, player.map_segment[0], player.map_segment[1]);
+            player.refresh_user_map_segments();
+        }
         let ctx = TEXT_AREA!.getContext("2d");
         ctx!.clearRect(0,0,TEXT_AREA!.width, TEXT_AREA!.height);
         let icon = new Image();
@@ -56,11 +65,20 @@ export default class Game{
             dice_border.onload = ()=>{
                 ctx!.drawImage(dice_border, 450, 20);
             }
+            if (player.has_key) {
+                let key = new Image();
+                key.src = './assets/key.png';
+                key.onload = () => {
+                    ctx!.drawImage(key, 110, 90, 20, 20);
+                }
+            }
 
-            let key = new Image();
-            key.src = './assets/key.png';
-            key.onload = ()=>{
-                ctx!.drawImage(key, 110, 90, 20, 20);
+            if (player.has_badge){
+                let badge = new Image();
+                badge.src = './assets/badge.png';
+                badge.onload = () => {
+                    ctx!.drawImage(badge, 140, 90, 20, 20);
+                }
             }
 
             document.addEventListener('keydown', dice_roll);
@@ -95,25 +113,31 @@ export default class Game{
                 const check_moves = ()=>
                 {
                     if (!player.check_moves()) {
+                        //change of player
                         player.allowMove(false, null);
-                        if (player_number + 1 <= this.players_board.length - 1) {
-                            console.log('nastepny');
-                            this.next_round(this.players_board[player_number++], player_number++);
+                        console.log(player_number + ' : player number');
+                        console.log(this.players_board.length - 1 + ' : playerboard.len - 1');
+                        if (player_number == this.players_board.length - 1) {
+                            console.log('ten sam');
+                            this.next_round(this.players_board[0], 0);
                         }
                         else {
-                            console.log('ten sam');
-                            this.next_round(this.players_board[player_number], player_number);
+                            console.log('nastepny');
+                            console.log(this.players_board[player_number + 1]);
+                            this.next_round(this.players_board[player_number + 1], player_number + 1);
                         }
-                    }else window.setTimeout(check_moves, 100);
+                    }else {
+                        //update moves count
+                        ctx!.clearRect(235, 30, 35, 20);
+                        ctx!.fillText(String(this.diceRoll_result! - player.diceRoll_result!), 240, 50);
+                        window.setTimeout(check_moves, 500);
+                    }
                 }
                 check_moves();
             }
         }
 
     }
-
-
-
 
 
     /**

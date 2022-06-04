@@ -1,4 +1,4 @@
-export const hint_code = {
+export const hint_code: {[index: string]:any} = {
     "A":{
         "A":["S", "R", "E", "S", "N"],
         "B":["P", "O", "R", "C", "Y"],

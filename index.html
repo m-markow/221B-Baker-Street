@@ -13,9 +13,14 @@
 </div>
 <div style="display: flex; flex-direction: column;">
 <div class="main-container" id="game" style="display: none">
+        <canvas width="1300" height="540" id="explanation_canvas" style="z-index: -3"></canvas>
+        <canvas width="1000px" height="540px" id="place_scene" style="z-index: -2;"></canvas>
         <canvas width="1000px" height="540px" id="canva" style="z-index: 0; position: relative"></canvas>
 </div>
-        <canvas width="1000px" height="190px" id="text_area"></canvas>
+    <div class="main-container">
+        <canvas width="1000px" height="190px" id="text_scene" style="z-index: -2"></canvas>
+        <canvas width="1000px" height="190px" id="text_area" style="z-index: 1; position: relative"></canvas>
+    </div>
 </div>
 </body>
 </html>

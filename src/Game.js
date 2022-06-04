@@ -28,6 +28,15 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.next_round = function (player, player_number) {
         var _this = this;
+        console.log(player);
+        //load map segment
+        var main_ctx = CANVAS.getContext("2d");
+        var new_map_segment = new Image();
+        new_map_segment.src = './assets/map.png';
+        new_map_segment.onload = function () {
+            main_ctx.drawImage(new_map_segment, player.map_segment[0], player.map_segment[1]);
+            player.refresh_user_map_segments();
+        };
         var ctx = TEXT_AREA.getContext("2d");
         ctx.clearRect(0, 0, TEXT_AREA.width, TEXT_AREA.height);
         var icon = new Image();
@@ -44,11 +53,20 @@ var Game = /** @class */ (function () {
             dice_border.onload = function () {
                 ctx.drawImage(dice_border, 450, 20);
             };
-            var key = new Image();
-            key.src = './assets/key.png';
-            key.onload = function () {
-                ctx.drawImage(key, 110, 90, 20, 20);
-            };
+            if (player.has_key) {
+                var key_1 = new Image();
+                key_1.src = './assets/key.png';
+                key_1.onload = function () {
+                    ctx.drawImage(key_1, 110, 90, 20, 20);
+                };
+            }
+            if (player.has_badge) {
+                var badge_1 = new Image();
+                badge_1.src = './assets/badge.png';
+                badge_1.onload = function () {
+                    ctx.drawImage(badge_1, 140, 90, 20, 20);
+                };
+            }
             document.addEventListener('keydown', dice_roll);
             document.addEventListener('keyup', end_dice_roll);
         };
@@ -72,18 +90,26 @@ var Game = /** @class */ (function () {
                 ctx.fillText("MOVES MADE: 0", 100, 50);
                 var check_moves_1 = function () {
                     if (!player.check_moves()) {
+                        //change of player
                         player.allowMove(false, null);
-                        if (player_number + 1 <= _this.players_board.length - 1) {
-                            console.log('nastepny');
-                            _this.next_round(_this.players_board[player_number++], player_number++);
+                        console.log(player_number + ' : player number');
+                        console.log(_this.players_board.length - 1 + ' : playerboard.len - 1');
+                        if (player_number == _this.players_board.length - 1) {
+                            console.log('ten sam');
+                            _this.next_round(_this.players_board[0], 0);
                         }
                         else {
-                            console.log('ten sam');
-                            _this.next_round(_this.players_board[player_number], player_number);
+                            console.log('nastepny');
+                            console.log(_this.players_board[player_number + 1]);
+                            _this.next_round(_this.players_board[player_number + 1], player_number + 1);
                         }
                     }
-                    else
-                        window.setTimeout(check_moves_1, 100);
+                    else {
+                        //update moves count
+                        ctx.clearRect(235, 30, 35, 20);
+                        ctx.fillText(String(_this.diceRoll_result - player.diceRoll_result), 240, 50);
+                        window.setTimeout(check_moves_1, 500);
+                    }
                 };
                 check_moves_1();
             }

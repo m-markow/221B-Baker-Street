@@ -1,5 +1,6 @@
 import Player from "./Player.js";
 import Game from "./Game.js";
+import { placesPositions } from "./data_tools/PlacesPositions.js";
 var CANVAS = document.querySelector('#canva');
 var Board = /** @class */ (function () {
     function Board() {
@@ -69,6 +70,9 @@ var Board = /** @class */ (function () {
                         //console.log(this.playersBoard[i - 1].playerName);
                     }
                     if (result) {
+                        for (var i = 0; i < _this.playersBoard.length; i++) {
+                            _this.playersBoard[i].players_board = _this.playersBoard;
+                        }
                         choose_clues();
                         document.removeEventListener('keypress', enterListen);
                     }
@@ -274,7 +278,8 @@ var Board = /** @class */ (function () {
                 ctx.drawImage(img, -30, -200, img.width, img.width / 1.2);
                 ctx.fillStyle = '#AE8E81';
                 var setCase = function (val) {
-                    _this.case = parseInt(val);
+                    if (parseInt(val))
+                        _this.case = parseInt(val);
                 };
                 // @ts-ignore
                 var input = new CanvasInput({
@@ -291,10 +296,16 @@ var Board = /** @class */ (function () {
                     }
                 });
                 var click = function (e) {
-                    if (e.keyCode === 13) {
+                    if (e.keyCode === 13 && _this.case) {
                         document.removeEventListener('keyup', click);
                         input.destroy();
-                        new Game(_this.playersBoard, _this.coded_clues, _this.case);
+                        for (var i = 0; i < placesPositions.length; i++) {
+                            placesPositions[i].clue = _this.case;
+                        }
+                        var game = new Game(_this.playersBoard, _this.coded_clues, _this.case);
+                        for (var i = 0; i < placesPositions.length; i++) {
+                            placesPositions[i].game = game;
+                        }
                     }
                 };
                 document.addEventListener('keyup', click);
